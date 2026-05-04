@@ -11,54 +11,76 @@ import org.springframework.web.bind.annotation.*;
 public class EmployeeController {
 
     @Autowired
-    private EmployeeRepository userRepository;
+    private EmployeeRepository employeeRepository;
 
     @GetMapping
     public List<Employee> getAllUsers(@RequestParam(required = false) String department) {
         if (department != null) {
-            return userRepository.findByDepartment(department);
+            return employeeRepository.findByDepartment(department);
         }
-        return userRepository.findAll();
+        return employeeRepository.findAll();
+    }
+
+    @GetMapping("/TotalSalary")
+    public Double getTotalSalary(@RequestParam(required = false) String department) {
+        if (department != null) {
+            return employeeRepository.findByDepartment(department).stream()
+                .mapToDouble(Employee::getSalary)
+                .sum();
+        }
+        return employeeRepository.findAll().stream()
+                .mapToDouble(Employee::getSalary)
+                .sum();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Employee> getUserById(@PathVariable Long id) {
-        return userRepository.findById(id)
+    public ResponseEntity<?> getUserById(@PathVariable Long id) {
+        try {
+            employeeRepository.findById(id).get();
+            return employeeRepository.findById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
+        } catch (Exception e) {
+            return ResponseEntity.status(404).body("Employee not found");
+        }
     }
 
     @PostMapping
-    public ResponseEntity<?> createUser(@RequestBody Employee user) {
+    public ResponseEntity<?> createUser(@RequestBody Employee employee) {
         // 1. Check for duplicate emails using the repository method
-        if (userRepository.existsByEmail(user.getEmail())) {
+        if (employeeRepository.existsByEmail(employee.getEmail())) {
             return ResponseEntity.status(409).body("Error: Email already exists.");
         }
 
         // 2. Save and return the new employee if email is unique
-        Employee savedEmployee = userRepository.save(user);
+        Employee savedEmployee = employeeRepository.save(employee);
         return ResponseEntity.status(201).body(savedEmployee);
     }
 
     @PutMapping("/{id}")
-    public Employee updateUser(@PathVariable Long id, @RequestBody Employee user) {
-        Employee existingUser = userRepository.findById(id).get();
-        existingUser.setName(user.getName());
-        existingUser.setEmail(user.getEmail());
-        existingUser.setDepartment(user.getDepartment());
-        existingUser.setSalary(user.getSalary());
-        existingUser.setRole(user.getRole());
-        return userRepository.save(existingUser);
+    public ResponseEntity<?> updateUser(@PathVariable Long id, @RequestBody Employee employee) {
+        try {
+            employeeRepository.findById(id).get();
+            Employee existingUser = employeeRepository.findById(id).get();
+            existingUser.setName(employee.getName());
+            existingUser.setEmail(employee.getEmail());
+            existingUser.setDepartment(employee.getDepartment());
+            existingUser.setSalary(employee.getSalary());
+            existingUser.setRole(employee.getRole());
+            return ResponseEntity.ok(employeeRepository.save(existingUser));
+        } catch (Exception e) {
+            return ResponseEntity.status(404).body("Employee not found");
+        }
     }
 
     @DeleteMapping("/{id}")
-    public String deleteUser(@PathVariable Long id) {
+    public ResponseEntity<?> deleteUser(@PathVariable Long id) {
         try {
-            userRepository.findById(id).get();
-            userRepository.deleteById(id);
-            return "User deleted successfully";
+            employeeRepository.findById(id).get();
+            employeeRepository.deleteById(id);
+            return ResponseEntity.ok("Employee deleted successfully");
         } catch (Exception e) {
-            return "User not found";
+            return ResponseEntity.status(404).body("Employee not found");
         }
     }
 

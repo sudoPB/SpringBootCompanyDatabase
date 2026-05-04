@@ -4,23 +4,23 @@ services:
     image: my-image/java_app:latest
     build: .
     ports:
-      - 8080:8080
+      - ${JAVA_APP_PORT}:${JAVA_APP_PORT}
     environment:
-      - DATABASE_URL=jdbc:postgresql://java_db:5432/postgres
-      - DATABASE_USERNAME=postgres
-      - DATABASE_PASSWORD=postgres
+      - DATABASE_URL=jdbc:postgresql://java_db:${DB_PORT}/${DB_NAME}
+      - DATABASE_USERNAME=${DB_USER}
+      - DATABASE_PASSWORD=${DB_PASSWORD}
     depends_on:
-      - java_db
+      - ${DB_HOST}
 
   java_db:
-    container_name: java_db
+    container_name: ${DB_HOST}
     image: postgres:12
     ports:
-      - 5432:5432
+      - ${DB_PORT}:${DB_PORT}
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: postgres
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
     volumes:
       - pg_EmpData:/var/lib/postgresql/data
 

@@ -18,4 +18,9 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
      * Fetches all employees belonging to a specific department.
      */
     List<Employee> findByDepartment(String department);
+    /**
+     * Used for the POST /employees requirement.
+     * Fetches all employees with a specific salary.
+     */
+    List<Employee> findBySalaryGreaterThanEqual(Double salary);
 }
