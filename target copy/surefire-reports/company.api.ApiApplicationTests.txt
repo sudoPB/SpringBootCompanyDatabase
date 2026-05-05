@@ -1,4 +1,0 @@
--------------------------------------------------------------------------------
-Test set: company.api.ApiApplicationTests
--------------------------------------------------------------------------------
-Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 6.227 s -- in company.api.ApiApplicationTests

@@ -1,21 +1,21 @@
 package company.api.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 
-@NoArgsConstructor
 @AllArgsConstructor
-@ToString
 @Entity
-@Table(name = "department_budgets")
 @Getter
+@NoArgsConstructor
 @Setter
+@Table(name = "department_budgets")
+@ToString
 public class Department {
     
     @Id

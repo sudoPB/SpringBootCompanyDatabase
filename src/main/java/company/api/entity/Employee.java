@@ -45,7 +45,4 @@ public class Employee {
     @NotBlank(message = "Role is mandatory")
     @Column(name = "role")
     private String role;
-
-    @Column(name = "manager_id")
-    private Long managerId;
 }
