@@ -28,8 +28,9 @@ public class Employee {
     @Column(name = "name")
     private String name;
 
-    @Email(message = "Email should be valid")
+
     @NotBlank(message = "Email is mandatory")
+    @Email(message = "Email should be valid")
     @Size(max = 100, message = "Email should not exceed 100 characters")
     @Column(name = "email", unique = true)
     private String email;

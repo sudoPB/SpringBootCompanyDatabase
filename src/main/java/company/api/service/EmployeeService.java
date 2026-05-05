@@ -66,14 +66,19 @@ public class EmployeeService {
 
         checkSalaryWithManger(details);
 
-        departmentService.departmentAddSalary(details.getDepartment(), details.getSalary());
-        departmentService.departmentSubtractSalary(employee.getDepartment(), employee.getSalary());
+        double newSalary = details.getSalary() - employee.getSalary();
 
-        employee.setName(details.getName());
-        employee.setEmail(details.getEmail());
-        employee.setDepartment(details.getDepartment());
-        employee.setSalary(details.getSalary());
-        employee.setRole(details.getRole());
+        if(newSalary > 0) {
+            departmentService.departmentAddSalary(employee.getDepartment(), newSalary);
+        } else if (newSalary < 0) {
+            departmentService.departmentSubtractSalary(employee.getDepartment(), -newSalary);
+        }
+
+        employee.setName(details.getName()!= null ? details.getName() : employee.getName());
+        employee.setEmail(details.getEmail()!= null ? details.getEmail() : employee.getEmail());
+        employee.setDepartment(details.getDepartment()!= null ? details.getDepartment() : employee.getDepartment());
+        employee.setSalary(details.getSalary()!= null ? details.getSalary() : employee.getSalary());
+        employee.setRole(details.getRole()!= null ? details.getRole() : employee.getRole());
 
         return employeeRepository.save(employee);
     }
