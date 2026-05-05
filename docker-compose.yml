@@ -1,28 +1,31 @@
 services:
-  java_app:
-    container_name: java_app
-    image: my-image/java_app:latest
-    build: .
-    ports:
-      - ${JAVA_APP_PORT}:${JAVA_APP_PORT}
-    environment:
-      - DATABASE_URL=jdbc:postgresql://java_db:${DB_PORT}/${DB_NAME}
-      - DATABASE_USERNAME=${DB_USER}
-      - DATABASE_PASSWORD=${DB_PASSWORD}
-    depends_on:
-      - ${DB_HOST}
+  # java_app:
+  #   container_name: java_app
+  #   image: my-image/java_app:latest
+  #   build: .
+  #   ports:
+  #     - ${SPRING_APPLICATION_PORT}:${SPRING_APPLICATION_PORT}
+  #   environment:
+  #     - DATABASE_URL=SPRING_DATASOURCE_URL
+  #     - DATABASE_USERNAME=SPRING_DATASOURCE_USERNAME
+  #     - DATABASE_PASSWORD=SPRING_DATASOURCE_PASSWORD
+  #   depends_on:
+  #     - db
 
-  java_db:
+  db:
     container_name: ${DB_HOST}
-    image: postgres:12
+    image: postgres:latest
     ports:
-      - ${DB_PORT}:${DB_PORT}
+      - ${DB_PORT}:5432
     environment:
-      POSTGRES_USER: ${DB_USER}
+      POSTGRES_USER: ${DB_USERNAME}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_DB: ${DB_NAME}
     volumes:
-      - pg_EmpData:/var/lib/postgresql/data
+      - ./pg_Data:/var/lib/postgresql
 
-volumes:
-  pg_EmpData: {}
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 80:8080
