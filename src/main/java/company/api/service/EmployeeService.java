@@ -19,17 +19,20 @@ public class EmployeeService {
     @Autowired
     private DepartmentService departmentService;
 
+    // Salary Check Logic
     public boolean checkSalaryWithManger(Employee employee) {
         List<Employee> employees = getAllEmployees(employee.getDepartment());
         for (Employee emp : employees) {
-            if (emp.getRole().toLowerCase().contains("manager") && emp.getSalary() <= employee.getSalary()) {
+            boolean isManager = emp.getRole().toLowerCase().contains("manager");
+            boolean moreManagerSalary = emp.getSalary() <= employee.getSalary();
+            if (isManager && moreManagerSalary) {
                 throw new MessageException("Employee's salary exceeds manager's salary.");
             }
         }
         return true; // Salary is within acceptable range
     }
 
-    // 1. Create with Duplicate Email Check
+    // Create with Duplicate Email Check
     public Employee createEmployee(Employee details) {
         if(departmentService.departmentExists(details.getDepartment()) == false) {
              throw new DepartmentNotFoundException(details.getDepartment());
@@ -46,7 +49,7 @@ public class EmployeeService {
         return employeeRepository.save(details);
     }
 
-    // 2. Fetch all with optional filtering
+    // Fetch all with optional filtering
     public List<Employee> getAllEmployees(String department) {
         if (department != null && !department.isEmpty()) {
             return employeeRepository.findByDepartment(department);
@@ -54,19 +57,19 @@ public class EmployeeService {
         return employeeRepository.findAll();
     }
 
-    // 3. Fetch one with Graceful 404
+    // Fetch one with Graceful 404
     public Employee getEmployeeById(Long id) {
         return employeeRepository.findById(id)
                 .orElseThrow(() -> new EmployeeNotFoundException(id));
     }
 
-    // 4. Full Update (PUT)
+    // Full Update (PUT)
     public Employee updateEmployee(Long id, Employee details) {
         Employee employee = getEmployeeById(id); // Reuses the 404 logic above
 
         checkSalaryWithManger(details);
 
-        double newSalary = details.getSalary() - employee.getSalary();
+        double newSalary = details.getSalary()!= null ? details.getSalary() - employee.getSalary() : 0;
 
         if(newSalary > 0) {
             departmentService.departmentAddSalary(employee.getDepartment(), newSalary);
@@ -83,7 +86,7 @@ public class EmployeeService {
         return employeeRepository.save(employee);
     }
 
-    // 5. Delete
+    // Delete
     public Employee deleteEmployee(Long id) {
         if (!employeeRepository.existsById(id)) {
             throw new EmployeeNotFoundException(id);

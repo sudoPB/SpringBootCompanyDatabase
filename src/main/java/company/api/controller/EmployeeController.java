@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import company.api.entity.Employee;
 import company.api.service.EmployeeService;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/employees")
@@ -37,7 +38,7 @@ public class EmployeeController {
     }
 
     @PostMapping
-    public Employee createUser(@RequestBody Employee employee) {
+    public Employee createUser(@Valid @RequestBody Employee employee) {
         return employeeService.createEmployee(employee);
     }
 

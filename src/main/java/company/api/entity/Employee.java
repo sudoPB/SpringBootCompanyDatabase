@@ -25,25 +25,20 @@ public class Employee {
     private Long id;
 
     @NotBlank(message = "Name is mandatory")
-    @Column(name = "name")
     private String name;
 
 
     @NotBlank(message = "Email is mandatory")
     @Email(message = "Email should be valid")
     @Size(max = 100, message = "Email should not exceed 100 characters")
-    @Column(name = "email", unique = true)
     private String email;
 
     @NotBlank(message = "Department is mandatory")
-    @Column(name = "department")
     private String department;
 
     @NotNull(message = "Salary is mandatory")
-    @Column(name = "salary")
     private Double salary;
 
     @NotBlank(message = "Role is mandatory")
-    @Column(name = "role")
     private String role;
 }
